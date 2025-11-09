@@ -65,10 +65,12 @@ class _MyAppState extends ConsumerState<MyApp> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
+        /// Floating Action Button style.
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Color(0xFFFFB300),
           foregroundColor: Color(0xFF1A237E),
         ),
+        /// Elevated Button style.
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF1A237E),
@@ -80,6 +82,7 @@ class _MyAppState extends ConsumerState<MyApp> {
             ),
           ),
         ),
+        ///Filled Button style.
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
             backgroundColor: const Color(0xFF1A237E),
@@ -91,6 +94,7 @@ class _MyAppState extends ConsumerState<MyApp> {
             ),
           ),
         ),
+        /// Outlined Button style.
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             foregroundColor: const Color(0xFF1A237E),
@@ -101,6 +105,7 @@ class _MyAppState extends ConsumerState<MyApp> {
             ),
           ),
         ),
+        /// Text Button style.
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
             foregroundColor: const Color(0xFF1A237E),
