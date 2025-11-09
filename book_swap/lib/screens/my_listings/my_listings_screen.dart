@@ -28,7 +28,7 @@ class MyListingsScreen extends ConsumerWidget {
             },
             tooltip: 'View Swap Offers',
           ),
-          
+
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
@@ -166,30 +166,46 @@ class MyListingsScreen extends ConsumerWidget {
   }
 
   Future<void> _deleteBook(
-    BuildContext context,
-    WidgetRef ref,
-    String bookId,
-  ) async {
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
+  BuildContext context,
+  WidgetRef ref,
+  String bookId,
+) async {
+  final scaffoldMessenger = ScaffoldMessenger.of(context);
 
-    try {
-      final firestoreService = ref.read(firestoreServiceProvider);
-      // TODO: Also delete the book's image from storage
-      await firestoreService.deleteBook(bookId);
-
-      scaffoldMessenger.showSnackBar(
-        const SnackBar(
-          content: Text('✅ Book deleted successfully'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      scaffoldMessenger.showSnackBar(
-        SnackBar(
-          content: Text('Error: ${e.toString().replaceAll('Exception: ', '')}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+  try {
+    final firestoreService = ref.read(firestoreServiceProvider);
+    final storageService = ref.read(storageServiceProvider);
+    
+    // Get book details first to delete image
+    final book = await firestoreService.getBookById(bookId);
+    
+    // Delete book's image from storage if it exists
+    if (book != null && book.imageUrl != null) {
+      try {
+        await storageService.deleteBookCover(book.imageUrl!);
+        debugPrint('✅ Book image deleted from storage');
+      } catch (e) {
+        debugPrint('⚠️ Could not delete image: $e');
+        // Continue with book deletion even if image deletion fails
+      }
     }
+    
+    // Delete book from Firestore
+    await firestoreService.deleteBook(bookId);
+
+    scaffoldMessenger.showSnackBar(
+      const SnackBar(
+        content: Text('✅ Book deleted successfully'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  } catch (e) {
+    scaffoldMessenger.showSnackBar(
+      SnackBar(
+        content: Text('Error: ${e.toString().replaceAll('Exception: ', '')}'),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
+}
 }

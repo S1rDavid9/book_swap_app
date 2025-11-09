@@ -5,3 +5,4 @@ export 'firestore_provider.dart';
 export 'storage_provider.dart';
 export 'loading_provider.dart';
 export 'settings_provider.dart'; 
+export 'chat_provider.dart';

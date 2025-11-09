@@ -5,9 +5,9 @@ import '../../providers/providers.dart';
 import '../../widgets/book_card.dart';
 import '../../models/book_model.dart';
 import '../my_listings/my_listings_screen.dart';
+import '../chats/chats_screen.dart'; 
 import '../settings/settings_screen.dart';
 import 'book_details_screen.dart';
-import '../my_listings/my_offers_screen.dart';
 
 class BrowseScreen extends ConsumerStatefulWidget {
   const BrowseScreen({super.key});
@@ -24,7 +24,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen> {
     final screens = [
       const BrowseListingsView(),
       const MyListingsScreen(),
-      const Center(child: Text('Chats - Coming Soon')),
+      const ChatsScreen(), 
       const SettingsScreen(),
     ];
 
@@ -62,6 +62,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen> {
   }
 }
 
+
 class BrowseListingsView extends ConsumerWidget {
   const BrowseListingsView({super.key});
 
@@ -84,34 +85,48 @@ class BrowseListingsView extends ConsumerWidget {
       body: availableBooksAsync.when(
         data: (books) {
           if (books.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.book_outlined,
-                    size: 80,
-                    color: Colors.grey.shade400,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No books available yet',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Be the first to list a book!',
-                    style: TextStyle(
-                      color: Colors.grey.shade500,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFB300).withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.book_outlined,
+              size: 80,
+              color: const Color(0xFFFFB300),
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'No Books Available Yet',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1A237E),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Be the first to list a book and start swapping!',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
           return GridView.builder(
             padding: const EdgeInsets.all(16),

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../models/swap_model.dart';
-import '../../models/book_model.dart';
 import '../../providers/providers.dart';
+import '../chats/chat_detail_screen.dart';
 
 class MyOffersScreen extends ConsumerWidget {
   const MyOffersScreen({super.key});
@@ -15,8 +15,20 @@ class MyOffersScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('My Offers'),
-          bottom: const TabBar(
-            tabs: [
+          bottom: TabBar(
+            indicatorColor: const Color(0xFFFFB300), // Gold indicator
+            indicatorWeight: 3,
+            labelColor: const Color(0xFFFFB300), // Gold when selected
+            unselectedLabelColor: Colors.white70,
+            labelStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            unselectedLabelStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+            ),
+            tabs: const [
               Tab(text: 'Sent'),
               Tab(text: 'Received'),
             ],
@@ -246,6 +258,8 @@ class SwapCard extends ConsumerWidget {
                   children: [
                     CircleAvatar(
                       radius: 20,
+                      backgroundColor: const Color(0xFF1A237E),
+                      foregroundColor: Colors.white,
                       child: Text(user.displayName[0].toUpperCase()),
                     ),
                     const SizedBox(width: 12),
@@ -276,6 +290,50 @@ class SwapCard extends ConsumerWidget {
               loading: () => const SizedBox(),
               error: (error, stack) => const Text('Error loading user'),
             ),
+
+            // Start Chat Button & Complete Swap (for accepted swaps)
+            if (swap.status == SwapStatus.accepted)
+              otherUserAsync.when(
+                data: (user) {
+                  if (user == null) return const SizedBox();
+                  return Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: () => _startChat(context, ref, otherUserId, user),
+                          icon: const Icon(Icons.chat),
+                          label: const Text('Start Chat'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFFFFB300),
+                            foregroundColor: const Color(0xFF1A237E),
+                          ),
+                        ),
+                      ),
+                      // Complete Swap Button (only for requester)
+                      if (isSender)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: () => _showCompleteSwapDialog(context, ref, swap.swapId),
+                              icon: const Icon(Icons.check_circle),
+                              label: const Text('I Received the Book'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.green,
+                                side: const BorderSide(color: Colors.green),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+                loading: () => const SizedBox(),
+                error: (error, stack) => const SizedBox(),
+              ),
 
             // Action Buttons (only for receiver and pending status)
             if (!isSender && swap.status == SwapStatus.pending) ...[
@@ -413,6 +471,94 @@ class SwapCard extends ConsumerWidget {
           backgroundColor: Colors.red,
         ),
       );
+    }
+  }
+
+  void _showCompleteSwapDialog(BuildContext context, WidgetRef ref, String swapId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Complete Swap'),
+        content: const Text(
+          'Have you received the book?\n\n'
+          'This will transfer the book to your collection and mark the swap as completed.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Not Yet'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _completeSwap(context, ref, swapId);
+            },
+            style: FilledButton.styleFrom(backgroundColor: Colors.green),
+            child: const Text('Yes, Complete'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _completeSwap(
+    BuildContext context,
+    WidgetRef ref,
+    String swapId,
+  ) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    try {
+      final firestoreService = ref.read(firestoreServiceProvider);
+      await firestoreService.completeSwap(swapId);
+
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text('✅ Swap completed! The book is now in your collection.'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } catch (e) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Error: ${e.toString().replaceAll('Exception: ', '')}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _startChat(
+    BuildContext context,
+    WidgetRef ref,
+    String otherUserId,
+    dynamic user,
+  ) async {
+    try {
+      final chatService = ref.read(chatServiceProvider);
+      final chatId = await chatService.getOrCreateChat(otherUserId);
+      
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatDetailScreen(
+              chatId: chatId,
+              otherUser: user,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 }

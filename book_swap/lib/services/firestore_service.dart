@@ -277,6 +277,30 @@ class FirestoreService {
     }
   }
 
+  // Complete swap - transfer book ownership
+Future<void> completeSwap(String swapId) async {
+  try {
+    // Get swap details
+    final swap = await getSwapById(swapId);
+    if (swap == null) throw Exception('Swap not found');
+    
+    // Get book details
+    final book = await getBookById(swap.bookId);
+    if (book == null) throw Exception('Book not found');
+    
+    // Transfer book ownership to the requester (sender)
+    await updateBook(swap.bookId, {
+      'userId': swap.senderId, // New owner is the person who requested
+      'status': BookStatus.available.name, // Make it available again
+    });
+    
+    // Update swap status to completed
+    await updateSwapStatus(swapId, SwapStatus.completed);
+  } catch (e) {
+    throw Exception('Error completing swap: $e');
+  }
+}
+
   // Delete a swap
   Future<void> deleteSwap(String swapId) async {
     try {
