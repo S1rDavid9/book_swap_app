@@ -37,7 +37,7 @@ class ChatsScreen extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFB300).withOpacity(0.1),
+                        color: const Color(0xFFFFB300).withValues(alpha: 25), // 0.1 * 255 ≈ 25
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -90,11 +90,11 @@ class ChatsScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline, size: 60, color: Colors.red.shade300),
+              Icon(Icons.error_outline, size: 60, color: Colors.red.withValues(alpha: 200)),
               const SizedBox(height: 16),
               Text(
                 'Error loading chats',
-                style: TextStyle(fontSize: 18, color: Colors.red.shade700),
+                style: TextStyle(fontSize: 18, color: Colors.red.withValues(alpha: 220)),
               ),
               const SizedBox(height: 8),
               Padding(
@@ -157,7 +157,9 @@ class ChatTile extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontWeight: isUnread ? FontWeight.w500 : FontWeight.normal,
-                    color: isUnread ? Colors.black87 : Colors.grey.shade600,
+                    color: isUnread
+                        ? Colors.black87
+                        : Colors.grey.shade600,
                   ),
                 )
               : Text(

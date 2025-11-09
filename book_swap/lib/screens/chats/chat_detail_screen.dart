@@ -28,7 +28,6 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   void initState() {
     super.initState();
     debugPrint('🔵 Opening chat: ${widget.chatId}');
-    // Mark messages as read when opening chat
     Future.microtask(() {
       final chatService = ref.read(chatServiceProvider);
       chatService.markMessagesAsRead(widget.chatId);
@@ -51,12 +50,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     setState(() => _isLoading = true);
 
     try {
-      debugPrint('📤 Sending message: $text');
       final chatService = ref.read(chatServiceProvider);
       await chatService.sendMessage(widget.chatId, text);
-      debugPrint('✅ Message sent successfully');
 
-      // Scroll to bottom after sending
       if (_scrollController.hasClients) {
         Future.delayed(const Duration(milliseconds: 100), () {
           if (_scrollController.hasClients) {
@@ -69,7 +65,6 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
         });
       }
     } catch (e) {
-      debugPrint('❌ Error sending message: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -78,12 +73,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
           ),
         );
       }
-      // Restore text if sending failed
       _messageController.text = text;
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -109,14 +101,8 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.otherUser.displayName,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    widget.otherUser.email,
-                    style: const TextStyle(fontSize: 12),
-                  ),
+                  Text(widget.otherUser.displayName, style: const TextStyle(fontSize: 16)),
+                  Text(widget.otherUser.email, style: const TextStyle(fontSize: 12)),
                 ],
               ),
             ),
@@ -125,36 +111,24 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
       ),
       body: Column(
         children: [
-          // Messages List
           Expanded(
             child: messagesAsync.when(
               data: (messages) {
-                debugPrint('💬 Displaying ${messages.length} messages');
-                
                 if (messages.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.chat_bubble_outline,
-                          size: 80,
-                          color: Colors.grey.shade300,
-                        ),
+                        Icon(Icons.chat_bubble_outline, size: 80, color: Colors.grey.withValues(alpha: 77)), // 0.3*255 ≈ 77
                         const SizedBox(height: 16),
                         Text(
                           'No messages yet',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey.shade600,
-                          ),
+                          style: TextStyle(fontSize: 18, color: Colors.grey.withValues(alpha: 153)), // 0.6*255 ≈ 153
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Start the conversation!',
-                          style: TextStyle(
-                            color: Colors.grey.shade500,
-                          ),
+                          style: TextStyle(color: Colors.grey.withValues(alpha: 127)), // 0.5*255 ≈ 127
                         ),
                       ],
                     ),
@@ -180,28 +154,22 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
+                                  color: Colors.grey.withValues(alpha: 77),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
                                   _formatDate(message.timestamp),
                                   style: TextStyle(
-                                    color: Colors.grey.shade700,
+                                    color: Colors.grey.withValues(alpha: 179),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
                             ),
-                          MessageBubble(
-                            message: message,
-                            isMe: isMe,
-                          ),
+                          MessageBubble(message: message, isMe: isMe),
                         ],
                       );
                     },
@@ -210,7 +178,6 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
               },
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stack) {
-                debugPrint('❌ Error loading messages: $error');
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.all(32),
@@ -219,15 +186,12 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                       children: [
                         const Icon(Icons.error_outline, size: 60, color: Colors.red),
                         const SizedBox(height: 16),
-                        Text(
-                          'Error loading messages',
-                          style: TextStyle(color: Colors.red.shade700),
-                        ),
+                        Text('Error loading messages', style: TextStyle(color: Colors.red.withValues(alpha: 179))),
                         const SizedBox(height: 8),
                         Text(
                           error.toString(),
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                          style: TextStyle(fontSize: 12, color: Colors.grey.withValues(alpha: 153)),
                         ),
                       ],
                     ),
@@ -236,14 +200,12 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
               },
             ),
           ),
-
-          // Message Input
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 13), // 0.05*255 ≈ 13
                   blurRadius: 4,
                   offset: const Offset(0, -2),
                 ),
@@ -260,21 +222,15 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                         hintText: 'Type a message...',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                          borderSide: BorderSide(color: Colors.grey.withValues(alpha: 77)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF1A237E),
-                            width: 2,
-                          ),
+                          borderSide: const BorderSide(color: Color(0xFF1A237E), width: 2),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         filled: true,
-                        fillColor: Colors.grey.shade50,
+                        fillColor: Colors.grey.withValues(alpha: 13), // 0.05*255 ≈ 13
                       ),
                       maxLines: null,
                       textCapitalization: TextCapitalization.sentences,
@@ -289,10 +245,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                         ? const SizedBox(
                             width: 20,
                             height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
                         : IconButton(
                             icon: const Icon(Icons.send, color: Colors.white, size: 20),
@@ -316,15 +269,10 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     final now = DateTime.now();
     final difference = now.difference(date);
 
-    if (_isSameDay(date, now)) {
-      return 'Today';
-    } else if (difference.inDays == 1) {
-      return 'Yesterday';
-    } else if (difference.inDays < 7) {
-      return DateFormat('EEEE').format(date);
-    } else {
-      return DateFormat('MMM d, y').format(date);
-    }
+    if (_isSameDay(date, now)) return 'Today';
+    if (difference.inDays == 1) return 'Yesterday';
+    if (difference.inDays < 7) return DateFormat('EEEE').format(date);
+    return DateFormat('MMM d, y').format(date);
   }
 }
 
@@ -346,9 +294,7 @@ class MessageBubble extends StatelessWidget {
         mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           Container(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.75,
-            ),
+            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
               color: isMe
@@ -362,7 +308,7 @@ class MessageBubble extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 13),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -376,14 +322,16 @@ class MessageBubble extends StatelessWidget {
                   style: TextStyle(
                     color: isMe ? Colors.white : const Color(0xFF1A237E),
                     fontSize: 15,
-                    fontWeight: FontWeight.w500
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   DateFormat('HH:mm').format(message.timestamp),
                   style: TextStyle(
-                    color: isMe ? Colors.white70 : const Color(0xFF1A237E).withOpacity(0.7),
+                    color: isMe
+                        ? Colors.white70
+                        : const Color(0xFF1A237E).withValues(alpha: 179),
                     fontSize: 11,
                   ),
                 ),

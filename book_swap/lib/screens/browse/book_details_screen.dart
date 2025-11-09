@@ -8,7 +8,6 @@ import '../../providers/providers.dart';
 
 class BookDetailsScreen extends ConsumerWidget {
   final BookModel book;
-
   const BookDetailsScreen({super.key, required this.book});
 
   @override
@@ -33,11 +32,11 @@ class BookDetailsScreen extends ConsumerWidget {
                   imageUrl: book.imageUrl!,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
-                    color: Colors.grey.shade200,
+                    color: const Color.fromARGB(255, 238, 238, 238),
                     child: const Center(child: CircularProgressIndicator()),
                   ),
                   errorWidget: (context, url, error) => Container(
-                    color: Colors.grey.shade300,
+                    color: const Color.fromARGB(255, 224, 224, 224),
                     child: const Icon(Icons.book, size: 80),
                   ),
                 ),
@@ -45,9 +44,9 @@ class BookDetailsScreen extends ConsumerWidget {
             else
               Container(
                 height: 200,
-                color: Colors.grey.shade300,
+                color: const Color.fromARGB(255, 224, 224, 224),
                 child: const Center(
-                  child: Icon(Icons.book, size: 80, color: Colors.grey),
+                  child: Icon(Icons.book, size: 80, color: Color.fromARGB(255, 128, 128, 128)),
                 ),
               ),
 
@@ -69,7 +68,7 @@ class BookDetailsScreen extends ConsumerWidget {
                   Text(
                     'by ${book.author}',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.grey.shade600,
+                          color: const Color.fromARGB(255, 117, 117, 117),
                         ),
                   ),
                   const SizedBox(height: 16),
@@ -124,8 +123,8 @@ class BookDetailsScreen extends ConsumerWidget {
                   // Listed Date
                   Text(
                     'Listed on ${DateFormat('MMM d, y').format(book.createdAt)}',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 117, 117, 117),
                       fontSize: 14,
                     ),
                   ),
@@ -159,22 +158,25 @@ class BookDetailsScreen extends ConsumerWidget {
     required String value,
     required Color color,
   }) {
+    final backgroundColor = color.withValues(alpha: 25); // 0.1 * 255 ≈ 25
+    final borderColor = color.withValues(alpha: 76);     // 0.3 * 255 ≈ 76
+
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: borderColor),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
-                color: Colors.grey.shade600,
+                color: Color.fromARGB(255, 117, 117, 117),
               ),
             ),
             const SizedBox(height: 4),
@@ -195,24 +197,24 @@ class BookDetailsScreen extends ConsumerWidget {
   Color _getConditionColor(BookCondition condition) {
     switch (condition) {
       case BookCondition.newCondition:
-        return Colors.green;
+        return const Color.fromARGB(255, 0, 128, 0).withValues();
       case BookCondition.likeNew:
-        return Colors.blue;
+        return const Color.fromARGB(255, 0, 0, 255).withValues();
       case BookCondition.good:
-        return Colors.orange;
+        return const Color.fromARGB(255, 255, 165, 0).withValues();
       case BookCondition.used:
-        return Colors.grey;
+        return const Color.fromARGB(255, 128, 128, 128).withValues();
     }
   }
 
   Color _getStatusColor(BookStatus status) {
     switch (status) {
       case BookStatus.available:
-        return Colors.green;
+        return const Color.fromARGB(255, 0, 128, 0).withValues();
       case BookStatus.pending:
-        return Colors.orange;
+        return const Color.fromARGB(255, 255, 165, 0).withValues();
       case BookStatus.swapped:
-        return Colors.grey;
+        return const Color.fromARGB(255, 128, 128, 128).withValues();
     }
   }
 
@@ -271,7 +273,7 @@ class BookDetailsScreen extends ConsumerWidget {
       scaffoldMessenger.showSnackBar(
         const SnackBar(
           content: Text('✅ Swap request sent!'),
-          backgroundColor: Colors.green,
+          backgroundColor: Color.fromARGB(255, 0, 128, 0),
         ),
       );
 
@@ -280,7 +282,7 @@ class BookDetailsScreen extends ConsumerWidget {
       scaffoldMessenger.showSnackBar(
         SnackBar(
           content: Text('Error: ${e.toString().replaceAll('Exception: ', '')}'),
-          backgroundColor: Colors.red,
+          backgroundColor: const Color.fromARGB(255, 255, 0, 0),
         ),
       );
     }

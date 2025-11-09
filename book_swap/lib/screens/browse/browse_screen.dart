@@ -62,7 +62,6 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen> {
   }
 }
 
-
 class BrowseListingsView extends ConsumerWidget {
   const BrowseListingsView({super.key});
 
@@ -85,48 +84,48 @@ class BrowseListingsView extends ConsumerWidget {
       body: availableBooksAsync.when(
         data: (books) {
           if (books.isEmpty) {
-  return Center(
-    child: Padding(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFB300).withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.book_outlined,
-              size: 80,
-              color: const Color(0xFFFFB300),
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'No Books Available Yet',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A237E),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Be the first to list a book and start swapping!',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    ),
-  );
-}
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB((0.1 * 255).round(), 255, 179, 0),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.book_outlined,
+                        size: 80,
+                        color: Color(0xFFFFB300),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'No Books Available Yet',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1A237E),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Be the first to list a book and start swapping!',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
 
           return GridView.builder(
             padding: const EdgeInsets.all(16),
@@ -180,9 +179,7 @@ class BrowseListingsView extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
-                onPressed: () {
-                  ref.invalidate(availableBooksProvider);
-                },
+                onPressed: () => ref.invalidate(availableBooksProvider),
                 icon: const Icon(Icons.refresh),
                 label: const Text('Retry'),
               ),

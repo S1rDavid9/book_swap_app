@@ -38,16 +38,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
     try {
       final authService = ref.read(authServiceProvider);
-      
-      debugPrint('📝 Attempting to sign up: ${_emailController.text.trim()}');
-      
       await authService.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         displayName: _nameController.text.trim(),
       );
-
-      debugPrint('✅ Sign up successful!');
 
       if (mounted) {
         Navigator.pushReplacement(
@@ -58,8 +53,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         );
       }
     } on FirebaseAuthException catch (e) {
-      debugPrint('❌ FirebaseAuthException: ${e.code} - ${e.message}');
-      
       String errorMessage;
       switch (e.code) {
         case 'network-request-failed':
@@ -80,7 +73,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         default:
           errorMessage = e.message ?? 'An error occurred during sign up.';
       }
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -96,8 +89,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         );
       }
     } catch (e) {
-      debugPrint('❌ General error: $e');
-      
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -125,7 +116,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             colors: [
               const Color(0xFF1A237E), // Navy
               const Color(0xFF283593), // Lighter Navy
-              const Color(0xFFFFB300).withOpacity(0.3), // Gold tint
+              Color.fromARGB((0.3 * 255).round(), 0xFF, 0xB3, 0x00), // Gold tint
             ],
           ),
         ),
@@ -140,7 +131,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withAlpha((0.2 * 255).round()),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -204,12 +195,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your name';
-                          }
-                          if (value.length < 2) {
-                            return 'Name must be at least 2 characters';
-                          }
+                          if (value == null || value.isEmpty) return 'Please enter your name';
+                          if (value.length < 2) return 'Name must be at least 2 characters';
                           return null;
                         },
                       ),
@@ -234,12 +221,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your email';
-                          }
-                          if (!value.contains('@')) {
-                            return 'Please enter a valid email';
-                          }
+                          if (value == null || value.isEmpty) return 'Please enter your email';
+                          if (!value.contains('@')) return 'Please enter a valid email';
                           return null;
                         },
                       ),
@@ -254,14 +237,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           prefixIcon: const Icon(Icons.lock, color: Color(0xFF1A237E)),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                              _obscurePassword ? Icons.visibility : Icons.visibility_off,
                               color: const Color(0xFF1A237E),
                             ),
-                            onPressed: () {
-                              setState(() => _obscurePassword = !_obscurePassword);
-                            },
+                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -275,12 +254,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a password';
-                          }
-                          if (value.length < 6) {
-                            return 'Password must be at least 6 characters';
-                          }
+                          if (value == null || value.isEmpty) return 'Please enter a password';
+                          if (value.length < 6) return 'Password must be at least 6 characters';
                           return null;
                         },
                       ),
@@ -295,15 +270,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF1A237E)),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscureConfirmPassword
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                              _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
                               color: const Color(0xFF1A237E),
                             ),
-                            onPressed: () {
-                              setState(() => _obscureConfirmPassword =
-                                  !_obscureConfirmPassword);
-                            },
+                            onPressed: () =>
+                                setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -317,12 +288,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please confirm your password';
-                          }
-                          if (value != _passwordController.text) {
-                            return 'Passwords do not match';
-                          }
+                          if (value == null || value.isEmpty) return 'Please confirm your password';
+                          if (value != _passwordController.text) return 'Passwords do not match';
                           return null;
                         },
                       ),
@@ -366,9 +333,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             onPressed: () {
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => const LoginScreen(),
-                                ),
+                                MaterialPageRoute(builder: (context) => const LoginScreen()),
                               );
                             },
                             child: const Text(
