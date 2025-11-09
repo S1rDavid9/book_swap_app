@@ -643,3 +643,14 @@ SOFTWARE.
 ## 👨‍💻 Author
 
 **Akachi David Nwanze** 
+
+---
+
+## 🙏 Acknowledgments
+
+- Flutter team for the amazing framework
+- Firebase for managed backend infrastructure
+- Riverpod for elegant state management
+- The open-source community for inspiration
+
+---
