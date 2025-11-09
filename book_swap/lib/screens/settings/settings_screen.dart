@@ -22,8 +22,8 @@ class SettingsScreen extends ConsumerWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              const Color(0xFF1A237E).withOpacity(0.05),
-              const Color(0xFFFFB300).withOpacity(0.05),
+              const Color(0xFF1A237E).withValues(alpha: 0.05),
+              const Color(0xFFFFB300).withValues(alpha: 0.05),
             ],
           ),
         ),
@@ -46,7 +46,7 @@ class SettingsScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -106,64 +106,31 @@ class SettingsScreen extends ConsumerWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Column(
                 children: [
-                  ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFB300).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.notifications, color: Color(0xFF1A237E)),
-                    ),
-                    title: const Text('Notifications'),
-                    subtitle: const Text('Enable push notifications'),
-                    trailing: Switch(
-                      value: settings.notificationsEnabled,
-                      activeColor: const Color(0xFFFFB300),
-                      onChanged: (value) {
-                        ref.read(settingsProvider.notifier).toggleNotifications(value);
-                      },
-                    ),
+                  _buildSwitchTile(
+                    icon: Icons.notifications,
+                    title: 'Notifications',
+                    subtitle: 'Enable push notifications',
+                    value: settings.notificationsEnabled,
+                    onChanged: (value) =>
+                        ref.read(settingsProvider.notifier).toggleNotifications(value),
                   ),
                   const Divider(height: 1),
-                  ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFB300).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.email, color: Color(0xFF1A237E)),
-                    ),
-                    title: const Text('Email Notifications'),
-                    subtitle: const Text('Receive email updates'),
-                    trailing: Switch(
-                      value: settings.emailNotifications,
-                      activeColor: const Color(0xFFFFB300),
-                      onChanged: (value) {
-                        ref.read(settingsProvider.notifier).toggleEmailNotifications(value);
-                      },
-                    ),
+                  _buildSwitchTile(
+                    icon: Icons.email,
+                    title: 'Email Notifications',
+                    subtitle: 'Receive email updates',
+                    value: settings.emailNotifications,
+                    onChanged: (value) =>
+                        ref.read(settingsProvider.notifier).toggleEmailNotifications(value),
                   ),
                   const Divider(height: 1),
-                  ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFB300).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.swap_horiz, color: Color(0xFF1A237E)),
-                    ),
-                    title: const Text('Swap Notifications'),
-                    subtitle: const Text('Notify about swap requests'),
-                    trailing: Switch(
-                      value: settings.swapNotifications,
-                      activeColor: const Color(0xFFFFB300),
-                      onChanged: (value) {
-                        ref.read(settingsProvider.notifier).toggleSwapNotifications(value);
-                      },
-                    ),
+                  _buildSwitchTile(
+                    icon: Icons.swap_horiz,
+                    title: 'Swap Notifications',
+                    subtitle: 'Notify about swap requests',
+                    value: settings.swapNotifications,
+                    onChanged: (value) =>
+                        ref.read(settingsProvider.notifier).toggleSwapNotifications(value),
                   ),
                 ],
               ),
@@ -176,18 +143,10 @@ class SettingsScreen extends ConsumerWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Column(
                 children: [
-                  ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFB300).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.info, color: Color(0xFF1A237E)),
-                    ),
-                    title: const Text('About'),
-                    subtitle: const Text('App version 1.0.0'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  _buildActionTile(
+                    icon: Icons.info,
+                    title: 'About',
+                    subtitle: 'App version 1.0.0',
                     onTap: () {
                       showAboutDialog(
                         context: context,
@@ -210,17 +169,9 @@ class SettingsScreen extends ConsumerWidget {
                     },
                   ),
                   const Divider(height: 1),
-                  ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFB300).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.help, color: Color(0xFF1A237E)),
-                    ),
-                    title: const Text('Help & Support'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  _buildActionTile(
+                    icon: Icons.help,
+                    title: 'Help & Support',
                     onTap: () {
                       showDialog(
                         context: context,
@@ -240,17 +191,9 @@ class SettingsScreen extends ConsumerWidget {
                     },
                   ),
                   const Divider(height: 1),
-                  ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFB300).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.privacy_tip, color: Color(0xFF1A237E)),
-                    ),
-                    title: const Text('Privacy Policy'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  _buildActionTile(
+                    icon: Icons.privacy_tip,
+                    title: 'Privacy Policy',
                     onTap: () {
                       showDialog(
                         context: context,
@@ -277,7 +220,7 @@ class SettingsScreen extends ConsumerWidget {
 
             const SizedBox(height: 8),
 
-            // Logout
+            // Logout Button
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: ElevatedButton.icon(
@@ -302,6 +245,65 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildSwitchTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool value,
+    required Function(bool) onChanged,
+  }) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFB300).withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: const Color(0xFF1A237E)),
+      ),
+      title: Text(title),
+      subtitle: Text(subtitle),
+      trailing: Switch(
+        value: value,
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected) || states.contains(WidgetState.pressed)) {
+            return const Color(0xFFFFB300);
+          }
+          return Colors.grey.shade400;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const Color(0xFFFFB300).withValues(alpha: 0.4);
+          }
+          return Colors.grey.shade300;
+        }),
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget _buildActionTile({
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFB300).withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: const Color(0xFF1A237E)),
+      ),
+      title: Text(title),
+      subtitle: subtitle != null ? Text(subtitle) : null,
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: onTap,
+    );
+  }
+
   void _showLogoutDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
@@ -316,11 +318,9 @@ class SettingsScreen extends ConsumerWidget {
           FilledButton(
             onPressed: () async {
               Navigator.pop(context);
-              
               try {
                 await FirebaseAuth.instance.signOut();
                 debugPrint('✅ Logged out successfully');
-                
                 if (context.mounted) {
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const LoginScreen()),

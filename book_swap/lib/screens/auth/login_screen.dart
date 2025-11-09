@@ -72,7 +72,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             colors: [
               const Color(0xFF1A237E), // Navy
               const Color(0xFF283593), // Lighter Navy
-              const Color(0xFFFFB300).withOpacity(0.3), // Gold tint
+              Color.fromARGB((0.3 * 255).round(), 0xFF, 0xB3, 0x00), // Gold tint
             ],
           ),
         ),
@@ -87,7 +87,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withAlpha((0.2 * 255).round()),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),

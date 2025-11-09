@@ -9,7 +9,7 @@ import 'screens/browse/browse_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -18,7 +18,7 @@ void main() async {
   } catch (e) {
     debugPrint('❌ Firebase initialization failed: $e');
   }
-  
+
   runApp(
     const ProviderScope(
       child: MyApp(),
@@ -42,18 +42,19 @@ class _MyAppState extends ConsumerState<MyApp> {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1A237E), // Navy Blue
-          primary: const Color(0xFF1A237E), // Navy Blue
-          secondary: const Color(0xFFFFB300), // Gold
-          tertiary: const Color(0xFF283593), // Lighter Navy
+          seedColor: const Color(0xFF1A237E),
+          primary: const Color(0xFF1A237E),
+          secondary: const Color(0xFFFFB300),
+          tertiary: const Color(0xFF283593),
           surface: Colors.white,
-          background: const Color(0xFFF5F7FA), // Light blue-grey background
+          // ✅ background → surface (background is deprecated)
+          surfaceContainer: const Color(0xFFF5F7FA),
         ),
-        scaffoldBackgroundColor: const Color(0xFFF5F7FA), // Light background
+        scaffoldBackgroundColor: const Color(0xFFF5F7FA),
         appBarTheme: const AppBarTheme(
           centerTitle: true,
           elevation: 0,
-          backgroundColor: Color(0xFF1A237E), // Navy Blue
+          backgroundColor: Color(0xFF1A237E),
           foregroundColor: Colors.white,
         ),
         cardTheme: CardThemeData(
@@ -64,12 +65,12 @@ class _MyAppState extends ConsumerState<MyApp> {
           ),
         ),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0xFFFFB300), // Gold
-          foregroundColor: Color(0xFF1A237E), // Navy Blue text
+          backgroundColor: Color(0xFFFFB300),
+          foregroundColor: Color(0xFF1A237E),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF1A237E), // Navy Blue
+            backgroundColor: const Color(0xFF1A237E),
             foregroundColor: Colors.white,
             elevation: 2,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -80,7 +81,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         ),
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
-            backgroundColor: const Color(0xFF1A237E), // Navy Blue
+            backgroundColor: const Color(0xFF1A237E),
             foregroundColor: Colors.white,
             elevation: 2,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -104,31 +105,34 @@ class _MyAppState extends ConsumerState<MyApp> {
             foregroundColor: const Color(0xFF1A237E),
           ),
         ),
+
+        // ✅ Updated to use WidgetStateProperty / WidgetState
         navigationBarTheme: NavigationBarThemeData(
-  backgroundColor: const Color(0xFF1A237E), // Navy Blue background
-  indicatorColor: const Color(0xFFFFB300), // Gold indicator
-  height: 70,
-  labelTextStyle: MaterialStateProperty.resolveWith((states) {
-    if (states.contains(MaterialState.selected)) {
-      return const TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFFFFB300), // Gold when selected
-      );
-    }
-    return const TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-      color: Colors.white70, // White when not selected
-    );
-  }),
-  iconTheme: MaterialStateProperty.resolveWith((states) {
-    if (states.contains(MaterialState.selected)) {
-      return const IconThemeData(color: Color(0xFF1A237E)); // Navy on gold indicator
-    }
-    return const IconThemeData(color: Colors.white70); // White when not selected
-  }),
-),
+          backgroundColor: const Color(0xFF1A237E),
+          indicatorColor: const Color(0xFFFFB300),
+          height: 70,
+          labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFFFB300),
+              );
+            }
+            return const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.white70,
+            );
+          }),
+          iconTheme: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const IconThemeData(color: Color(0xFF1A237E));
+            }
+            return const IconThemeData(color: Colors.white70);
+          }),
+        ),
+
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.white,
@@ -153,9 +157,11 @@ class _MyAppState extends ConsumerState<MyApp> {
             borderSide: const BorderSide(color: Colors.red, width: 2),
           ),
         ),
+
         chipTheme: ChipThemeData(
           backgroundColor: Colors.grey.shade200,
-          selectedColor: const Color(0xFFFFB300).withOpacity(0.3),
+          // ✅ withOpacity() → withValues(alpha: ...)
+          selectedColor: const Color(0xFFFFB300).withValues(alpha: 0.3),
           secondarySelectedColor: const Color(0xFF1A237E),
           labelStyle: const TextStyle(color: Color(0xFF1A237E)),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -178,8 +184,9 @@ class AuthWrapper extends ConsumerWidget {
 
     return authState.when(
       data: (user) {
-        debugPrint('🔄 Auth state: ${user?.email ?? "null"}, verified: ${user?.emailVerified ?? false}');
-        
+        debugPrint(
+            '🔄 Auth state: ${user?.email ?? "null"}, verified: ${user?.emailVerified ?? false}');
+
         if (user == null) {
           debugPrint('➡️  Showing LoginScreen');
           return const LoginScreen();
