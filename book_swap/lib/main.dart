@@ -9,7 +9,8 @@ import 'screens/browse/browse_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+ 
+ /// Initialize Firebase before the app runs.
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
